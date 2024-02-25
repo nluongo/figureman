@@ -4,32 +4,34 @@ bofa_scraper uses Selenium to traverse the BoA site and scrape transaction data 
 
 Airflow will monitor the downloading of transaction data and when it determines that it is finished will copy the data to the Firefly directory and then call Firefly's import API to load the data.
 
-Configuration:
+# Configuration:
 
 Add directories for your downloaded statements and place they will be copied before Firefly imports them to figureman/config.yaml
 
 bofa_scraper looks to a login.txt file in your home directory that contains the following four lines:
-'''
-BOA_USERNAME
-BOA_PASSWORD
-DOWNLOAD_DIR (same as in config.yaml)
-ACCOUNTS (Comma-separated list of BoA accounts and cards)
-'''
 
-Setup:
+    BOA_USERNAME
+    BOA_PASSWORD
+    DOWNLOAD_DIR (same as in config.yaml)
+    ACCOUNTS (Comma-separated list of BoA accounts and cards)
 
-'''
-export AIRFLOW_HOME=./airflow
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-aiflow standalone &
-'''
+# Setup:
 
-Running:
+Inside the top-level `figureman` directory
+
+    export AIRFLOW_HOME=./airflow
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+    aiflow standalone &
+    cp airflow_dags/* /airflow/dags/
+
+# Running:
+
 The pipleline DAG will appear in the airflow web UI under ImportToFirefly. Unless and until the 2FA can be automated, this running on a schedule is not particularly useful. So it simply runs ad-hoc when you prompt it in the UI.
 
-TODO:
+## TODO:
+
 1. Currently this works with a separate Firefly instance running in a Docker container. Add to the instructions and setup how to do this inside of figureman
 
 MIT License

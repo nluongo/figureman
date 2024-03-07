@@ -7,25 +7,25 @@ from airflow.decorators import task, sensor
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.sensors.base import PokeReturnValue
-from date_handler import compare_dates, seconds_since_last_updated, get_modification_date
 
-with open('../../config.yaml') as config_f:
+from date_handler import compare_dates, seconds_since_last_updated, get_modification_date
+from firefly_import import import_task
+
+with open('/home/nluongo/figureman/config.yaml') as config_f:
 	try:
-		config_dict = yaml.safe_load(stream)
+		config_dict = yaml.safe_load(config_f)
 	except yaml.YAMLError as exc:
 		print(exc)
 
 download_dir = config_dict['bofa_scraper']['download_dir']
-scraper_bin = config_dict['bofa_scraper']['python_bin']
 firefly_dir = config_dict['firefly']['statement_dir']
 
 time_started = time.time()
 
 with DAG(dag_id='ImportToFirefly', 
         start_date=datetime(2023, 12, 6),
-        catchup=False) as dag:
-    #compare_dates_task = PythonOperator(task_id='compare_dates', python_callable=compare_dates)
-    import_task = BashOperator(task_id='firefly_import', bash_command='firefly_import.sh') 
+        catchup=False,
+        schedule_interval=None) as dag:
 
     @task
     def scrape_call():
@@ -43,7 +43,7 @@ with DAG(dag_id='ImportToFirefly',
             started_scraping = True
 
         condition_met = False
-        if started_scraping and time_last_update > 60:
+        if started_scraping and time_last_update > 500:
             condition_met = True
 
         return PokeReturnValue(is_done=condition_met)

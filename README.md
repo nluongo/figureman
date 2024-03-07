@@ -28,7 +28,7 @@ Inside the top-level `figureman` directory
 
 # Running:
 
-The pipleline DAG will appear in the airflow web UI under ImportToFirefly. Unless and until the 2FA can be automated, this running on a schedule is not particularly useful. So it simply runs ad-hoc when you prompt it in the UI.
+The pipeline DAG will appear in the airflow web UI under ImportToFirefly. Unless and until the 2FA can be automated, this running on a schedule is not particularly useful. So it simply runs ad-hoc when you prompt it in the UI. There is also a DailyImport DAG that runs only the import task on a daily interval. This is intended to clean up any extra transactions that were downloaded but not imported during the ad-hoc run.
 
 ## TODO:
 
